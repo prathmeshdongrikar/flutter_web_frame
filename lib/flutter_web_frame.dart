@@ -23,10 +23,17 @@ class FlutterWebFrame extends StatefulWidget {
   /// Clip behavior
   final Clip clipBehavior;
 
+  // gradient background
+  final Gradient? gradient;
+
+  final bool isRadialGradient;
+
   const FlutterWebFrame({
     Key? key,
     required this.builder,
     this.enabled = true,
+    this.isRadialGradient = false,
+    this.gradient,
     this.backgroundColor,
     required this.maximumSize,
     this.clipBehavior = Clip.none,
@@ -85,7 +92,28 @@ class _FlutterWebFrameState extends State<FlutterWebFrame> {
     }
 
     return Container(
-      color: widget.backgroundColor ?? Theme.of(context).dividerColor,
+      decoration: BoxDecoration(
+          color: widget.backgroundColor,
+          gradient: widget.isRadialGradient
+              ? widget.gradient ??
+                  RadialGradient(
+                    radius: 0.9,
+                    center: Alignment.center,
+                    colors: <Color>[
+                      Color(0xFFFFFFFF),
+                      Color(0xff10099F).withOpacity(0.7),
+                    ],
+                  )
+              : widget.gradient ??
+                  LinearGradient(
+                      colors: [
+                        Color(0xFFFFFFFF),
+                        Color(0xff10099F).withOpacity(0.7),
+                      ],
+                      begin: const FractionalOffset(0.0, 0.0),
+                      end: const FractionalOffset(1.0, 0.0),
+                      stops: [0.0, 1.0],
+                      tileMode: TileMode.clamp)),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 400),
         child: MediaQueryObserver(
